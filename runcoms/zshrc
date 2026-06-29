@@ -76,3 +76,6 @@ fi
 if (( $+commands[direnv] )); then
   eval "$(direnv hook zsh)"
 fi
+
+# OpenClaw Completion
+[ -f "/Users/yugohikida/.openclaw/completions/openclaw.zsh" ] && source "/Users/yugohikida/.openclaw/completions/openclaw.zsh"
