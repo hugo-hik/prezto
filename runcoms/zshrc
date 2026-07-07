@@ -66,9 +66,6 @@ gwR() { git worktree remove -f "$(git worktree list | awk -v branch="$1" '$3 == 
 
 bindkey -e
 
-# The next line enables shell command completion for gcloud.
-if [ -f "${HOME}/google-cloud-sdk/completion.zsh.inc" ]; then . "${HOME}/google-cloud-sdk/completion.zsh.inc"; fi
-
 if (( $+commands[pyenv] )); then
   eval "$(pyenv init - zsh)"
 fi
@@ -77,5 +74,11 @@ if (( $+commands[direnv] )); then
   eval "$(direnv hook zsh)"
 fi
 
+# nvm completion
+[ -s "${HOME}/.nvm/bash_completion" ] && \. "${HOME}/.nvm/bash_completion"  # This loads nvm bash_completion
+
 # OpenClaw Completion
-[ -f "/Users/yugohikida/.openclaw/completions/openclaw.zsh" ] && source "/Users/yugohikida/.openclaw/completions/openclaw.zsh"
+[ -f "${HOME}/.openclaw/completions/openclaw.zsh" ] && source "${HOME}/.openclaw/completions/openclaw.zsh"
+
+# The next line enables shell command completion for gcloud.
+if [ -f "${HOME}/google-cloud-sdk/completion.zsh.inc" ]; then . "${HOME}/google-cloud-sdk/completion.zsh.inc"; fi
