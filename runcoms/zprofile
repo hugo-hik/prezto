@@ -39,49 +39,15 @@ fi
 # Paths
 #
 
-# Ensure path arrays do not contain duplicates.
-typeset -gU cdpath fpath mailpath path
-
-if [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+# PATH itself is defined in zpath (sourced from zshenv). Re-source it here
+# because /etc/zprofile (path_helper) reorders PATH after zshenv on macOS.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/runcoms/zpath" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/runcoms/zpath"
 fi
-
-# Set the list of directories that cd searches.
-# cdpath=(
-#   $cdpath
-# )
-
-# Set the list of directories that Zsh searches for programs.
-path=(
-  ${HOME}/.local/bin(N)
-  ${HOME}/.bin(N)
-  ${HOME}/Library/pnpm(N)
-  ${HOME}/Library/Android/sdk/platform-tools(N)
-  ${HOME}/Library/Application\ Support/JetBrains/Toolbox/scripts(N)
-  ${HOME}/.pyenv/bin(N)
-  /opt/homebrew/opt/mysql-client/bin(N)
-  /opt/homebrew/opt/openjdk/bin(N)
-  $HOME/{,s}bin(N)
-  /opt/{homebrew,local}/{,s}bin(N)
-  /usr/local/{,s}bin(N)
-  $path
-)
-
-export PYENV_ROOT="${HOME}/.pyenv"
-export PNPM_HOME="${HOME}/Library/pnpm"
-export CLOUDSDK_PYTHON="${PYENV_ROOT}/shims/python"
 
 export LDFLAGS="-L/usr/local/opt/zlib/lib"
 export CPPFLAGS="-I/usr/local/opt/zlib/include -I/opt/homebrew/opt/openjdk/include"
 export PKG_CONFIG_PATH="/usr/local/opt/zlib/lib/pkgconfig"
-
-if [[ -f "${HOME}/google-cloud-sdk/path.zsh.inc" ]]; then
-  source "${HOME}/google-cloud-sdk/path.zsh.inc"
-fi
-
-if (( $+commands[pyenv] )); then
-  eval "$(pyenv init --path)"
-fi
 
 #
 # Less
