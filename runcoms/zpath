@@ -1,0 +1,56 @@
+#
+# Defines PATH and related environment variables.
+#
+# Sourced from zshenv so that non-login, non-interactive shells and scripts
+# get the same PATH. Also re-sourced from zprofile because /etc/zprofile
+# (path_helper) reorders PATH after zshenv on macOS; re-sourcing restores
+# the custom priority. Safe to source multiple times.
+#
+
+# Ensure path arrays do not contain duplicates.
+typeset -gU cdpath fpath mailpath path
+
+# Ensure the system paths are always present and exported, even when the
+# shell starts with an empty environment.
+path+=(/usr/bin /bin /usr/sbin /sbin)
+export PATH
+
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+export PYENV_ROOT="${HOME}/.pyenv"
+export NVM_DIR="${HOME}/.nvm"
+export PNPM_HOME="${HOME}/Library/pnpm"
+export CLOUDSDK_PYTHON="${PYENV_ROOT}/shims/python"
+
+# Set the list of directories that Zsh searches for programs.
+path=(
+  ${HOME}/.local/bin(N)
+  ${HOME}/.bin(N)
+  ${HOME}/Library/pnpm(N)
+  ${HOME}/Library/Android/sdk/platform-tools(N)
+  ${HOME}/Library/Application\ Support/JetBrains/Toolbox/scripts(N)
+  ${HOME}/.pyenv/bin(N)
+  /opt/homebrew/opt/mysql-client/bin(N)
+  /opt/homebrew/opt/openjdk/bin(N)
+  $HOME/{,s}bin(N)
+  /opt/{homebrew,local}/{,s}bin(N)
+  /usr/local/{,s}bin(N)
+  $path
+)
+
+# Add the default nvm node version to PATH without loading nvm.sh (slow).
+# Falls back silently if the default alias is not a concrete version;
+# login shells still get node via nvm.sh loaded in zprofile.
+if [[ -r "${NVM_DIR}/alias/default" ]]; then
+  path=(${NVM_DIR}/versions/node/v${$(<"${NVM_DIR}/alias/default")#v}/bin(N) $path)
+fi
+
+if [[ -f "${HOME}/google-cloud-sdk/path.zsh.inc" ]]; then
+  source "${HOME}/google-cloud-sdk/path.zsh.inc"
+fi
+
+if (( $+commands[pyenv] )); then
+  eval "$(pyenv init --path)"
+fi
